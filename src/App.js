@@ -1,8 +1,8 @@
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import HomePage from './pages/HomePage/HomePage';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage/HomePage";
+import DetailPage from "./pages/DetailPage/DetailPage";
 
 function App() {
-
   return (
     <Router>
       <div className="App">
@@ -11,8 +11,8 @@ function App() {
         </nav>
 
         <Switch>
-          {/* <Route exact path="/detail/:id" component={DetailPage}/> */}
-          <Route exact path="/" component={HomePage}/>
+          <Route exact path="/detail/:id" component={DetailPage} />
+          <Route exact path="/" component={HomePage} />
         </Switch>
       </div>
     </Router>
