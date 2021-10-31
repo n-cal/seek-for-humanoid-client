@@ -13,11 +13,16 @@ function HomePage(props) {
   const [queryParams, setQueryParams] = useState("");
   const [haveHumanoids, setHaveHumanoids] = useState(false);
 
+  // function fetchHumanoids
+  // function fetchCountries
+
   useEffect(() => {
     console.log(queryParams);
     console.log(`pag=${currentPage}`);
+    console.log(process.env.REACT_APP_API_URL);
     fetch(
-      `http://127.0.0.1:8000/api/humanoids?pag=${currentPage}` +
+      process.env.REACT_APP_API_URL +
+        `/api/humanoids?pag=${currentPage}` +
         (queryParams ? "&" + queryParams : "")
     )
       .then((response) => {
@@ -43,7 +48,7 @@ function HomePage(props) {
   }, [currentPage, queryParams]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/countries")
+    fetch(process.env.API_URL + "/api/countries")
       .then((response) => response.json())
       .then((json) => {
         setCountries(json);
@@ -96,7 +101,6 @@ function HomePage(props) {
         ) : (
           <h2 className="text-center text-xl">No Humanoids Found</h2>
         )}
-        {/* <PageSelector pagesCount={4} currentPage={4} setCurrentPage={setCurrentPage} /> */}
         {haveHumanoids && (
           <PageSelector
             pagesCount={pagesCount}
