@@ -14,6 +14,7 @@ function HomePage(props) {
   const [queryParams, setQueryParams] = useState("");
   const [haveHumanoids, setHaveHumanoids] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // function fetchHumanoids
   // function fetchCountries
@@ -34,24 +35,29 @@ function HomePage(props) {
       })
       .then((json) => {
         if (json.count === 0) {
-          throw new Error("no humanoids in response");
+          setHaveHumanoids(false);
+        } else {
+          setPagesCount(Math.floor(json.count / json.results.length));
+          setHumanoids(json.results);
+          setHaveHumanoids(true);
         }
-
-        setPagesCount(Math.floor(json.count / json.results.length));
-        setHumanoids(json.results);
-        setHaveHumanoids(true);
-        setLoading(false);
       })
       .catch((err) => {
-        setHaveHumanoids(false);
+        setError(true);
         setHumanoids([]);
-        setLoading(false);
-      });
+      })
+      .finally(() => setLoading(false));
   }, [currentPage, queryParams]);
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_URL + "/api/countries")
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error("error fetching countries");
+        } else {
+          return response.json();
+        }
+      })
       .then((json) => {
         setCountries(json);
         if (!json.includes(selectedCountry)) {
@@ -59,6 +65,7 @@ function HomePage(props) {
         }
       })
       .catch((err) => {
+        setError(true);
         setCountries([]);
       });
   }, [currentPage, queryParams]);
@@ -93,6 +100,8 @@ function HomePage(props) {
 
   if (loading) {
     content = <Loader />;
+  } else if (error) {
+    content = <h1 className="text-center text-xl">An Error Occurred!</h1>;
   } else if (haveHumanoids) {
     content = [
       <HumanoidsList humanoids={humanoids} />,
@@ -105,10 +114,7 @@ function HomePage(props) {
   return (
     <div className="flex flex-col items-center p-3 text-gray-600 sm:flex-row-reverse sm:justify-center sm:items-start">
       <SearchController
-        makeQuery={makeQuery}
-        setSearchName={setSearchName}
-        setSelectedCountry={setSelectedCountry}
-        countries={countries}
+        {...{ makeQuery, setSearchName, setSelectedCountry, countries }}
       />
       <div className="flex-col items-stretch flex-grow max-w-xl">{content}</div>
     </div>
