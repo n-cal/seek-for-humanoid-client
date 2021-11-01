@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SearchController from "../../components/SearchController/SearchController";
 import HumanoidsList from "../../components/HumanoidsList/HumanoidsList";
 import PageSelector from "../../components/PageSelector/PageSelector";
+import Loader from "../../components/Loader/Loader";
 
 function HomePage(props) {
   const [humanoids, setHumanoids] = useState([]);
@@ -12,14 +13,13 @@ function HomePage(props) {
   const [searchName, setSearchName] = useState("");
   const [queryParams, setQueryParams] = useState("");
   const [haveHumanoids, setHaveHumanoids] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // function fetchHumanoids
   // function fetchCountries
 
   useEffect(() => {
-    console.log(queryParams);
-    console.log(`pag=${currentPage}`);
-    console.log(process.env.REACT_APP_API_URL);
+    setLoading(true);
     fetch(
       process.env.REACT_APP_API_URL +
         `/api/humanoids?pag=${currentPage}` +
@@ -40,10 +40,12 @@ function HomePage(props) {
         setPagesCount(Math.floor(json.count / json.results.length));
         setHumanoids(json.results);
         setHaveHumanoids(true);
+        setLoading(false);
       })
       .catch((err) => {
         setHaveHumanoids(false);
         setHumanoids([]);
+        setLoading(false);
       });
   }, [currentPage, queryParams]);
 
@@ -87,6 +89,19 @@ function HomePage(props) {
     setQueryParams(params.toString());
   }
 
+  let content = null;
+
+  if (loading) {
+    content = <Loader />;
+  } else if (haveHumanoids) {
+    content = [
+      <HumanoidsList humanoids={humanoids} />,
+      <PageSelector {...{ pagesCount, currentPage, setCurrentPage }} />,
+    ];
+  } else {
+    content = <h1 className="text-center">No Humanoids found </h1>;
+  }
+
   return (
     <div className="flex flex-col items-center p-3 text-gray-600 sm:flex-row-reverse sm:justify-center sm:items-start">
       <SearchController
@@ -95,20 +110,7 @@ function HomePage(props) {
         setSelectedCountry={setSelectedCountry}
         countries={countries}
       />
-      <div className="flex-col items-stretch flex-grow max-w-xl">
-        {haveHumanoids ? (
-          <HumanoidsList humanoids={humanoids} />
-        ) : (
-          <h2 className="text-center text-xl">No Humanoids Found</h2>
-        )}
-        {haveHumanoids && (
-          <PageSelector
-            pagesCount={pagesCount}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-          />
-        )}
-      </div>
+      <div className="flex-col items-stretch flex-grow max-w-xl">{content}</div>
     </div>
   );
 }
