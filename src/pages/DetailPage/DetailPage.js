@@ -11,7 +11,7 @@ function DetailPage(props) {
     fetch(process.env.REACT_APP_API_URL + `/api/humanoids/${params.id}`)
       .then((response) => response.json())
       .then((json) => {
-        humanoid = setHumanoid(json);
+        setHumanoid(json);
       })
       .catch((err) => console.log("error"));
   }, []);
