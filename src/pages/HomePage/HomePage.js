@@ -99,7 +99,7 @@ function HomePage(props) {
       <PageSelector {...{ pagesCount, currentPage, setCurrentPage }} />,
     ];
   } else {
-    content = <h1 className="text-center">No Humanoids found </h1>;
+    content = <h1 className="text-center text-xl">No Humanoids found </h1>;
   }
 
   return (
