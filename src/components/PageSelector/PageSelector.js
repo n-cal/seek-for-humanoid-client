@@ -1,5 +1,10 @@
-function PageSelector({ currentPage, pagesCount, setCurrentPage }) {
+const resultsPerPage = 4;
+
+function PageSelector({ currentPage, resultsCount, setCurrentPage }) {
   const selectedStyle = "text-gray-700 underline";
+  const pagesCount =
+    Math.floor(resultsCount / resultsPerPage) +
+    (resultsCount % resultsPerPage > 0 ? 1 : 0);
 
   let centralPages = [];
 

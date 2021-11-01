@@ -7,7 +7,7 @@ import Loader from "../../components/Loader/Loader";
 function HomePage(props) {
   const [humanoids, setHumanoids] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pagesCount, setPagesCount] = useState(0);
+  const [resultsCount, setResultsCount] = useState(0);
   const [countries, setCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [searchName, setSearchName] = useState("");
@@ -37,7 +37,7 @@ function HomePage(props) {
         if (json.count === 0) {
           setHaveHumanoids(false);
         } else {
-          setPagesCount(Math.floor(json.count / json.results.length));
+          setResultsCount(json.count);
           setHumanoids(json.results);
           setHaveHumanoids(true);
         }
@@ -104,11 +104,14 @@ function HomePage(props) {
     content = <h1 className="text-center text-xl">An Error Occurred!</h1>;
   } else if (haveHumanoids) {
     content = [
-      <HumanoidsList humanoids={humanoids} />,
-      <PageSelector {...{ pagesCount, currentPage, setCurrentPage }} />,
+      <HumanoidsList key="1" humanoids={humanoids} />,
+      <PageSelector
+        key="2"
+        {...{ resultsCount, currentPage, setCurrentPage }}
+      />,
     ];
   } else {
-    content = <h1 className="text-center text-xl">No Humanoids found </h1>;
+    content = <h1 className="text-center text-xl">No Humanoids found</h1>;
   }
 
   return (
