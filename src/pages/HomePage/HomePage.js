@@ -48,7 +48,7 @@ function HomePage(props) {
   }, [currentPage, queryParams]);
 
   useEffect(() => {
-    fetch(process.env.API_URL + "/api/countries")
+    fetch(process.env.REACT_APP_API_URL + "/api/countries")
       .then((response) => response.json())
       .then((json) => {
         setCountries(json);
