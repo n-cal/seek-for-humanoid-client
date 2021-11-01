@@ -5,19 +5,17 @@ import PageSelector from "../../components/PageSelector/PageSelector";
 import Loader from "../../components/Loader/Loader";
 
 function HomePage(props) {
-  const [humanoids, setHumanoids] = useState([]);
+  const [humanoidsResult, setHumanoidsResult] = useState({
+    count: 0,
+    results: [],
+  });
   const [currentPage, setCurrentPage] = useState(1);
-  const [resultsCount, setResultsCount] = useState(0);
   const [countries, setCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [searchName, setSearchName] = useState("");
   const [queryParams, setQueryParams] = useState("");
-  const [haveHumanoids, setHaveHumanoids] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // function fetchHumanoids
-  // function fetchCountries
 
   useEffect(() => {
     setLoading(true);
@@ -34,17 +32,14 @@ function HomePage(props) {
         }
       })
       .then((json) => {
-        if (json.count === 0) {
-          setHaveHumanoids(false);
-        } else {
-          setResultsCount(json.count);
-          setHumanoids(json.results);
-          setHaveHumanoids(true);
-        }
+        setHumanoidsResult({
+          count: json.count,
+          results: json.results,
+        });
       })
       .catch((err) => {
         setError(true);
-        setHumanoids([]);
+        setHumanoidsResult({ count: 0, results: [] });
       })
       .finally(() => setLoading(false));
   }, [currentPage, queryParams]);
@@ -102,16 +97,17 @@ function HomePage(props) {
     content = <Loader />;
   } else if (error) {
     content = <h1 className="text-center text-xl">An Error Occurred!</h1>;
-  } else if (haveHumanoids) {
+  } else if (humanoidsResult.count > 0) {
     content = [
-      <HumanoidsList key="1" humanoids={humanoids} />,
+      <HumanoidsList key="1" humanoids={humanoidsResult.results} />,
       <PageSelector
         key="2"
-        {...{ resultsCount, currentPage, setCurrentPage }}
+        resultsCount={humanoidsResult.count}
+        {...{ currentPage, setCurrentPage }}
       />,
     ];
   } else {
-    content = <h1 className="text-center text-xl">No Humanoids found</h1>;
+    content = <h1 className="text-center text-xl">No Humanoids Found</h1>;
   }
 
   return (
