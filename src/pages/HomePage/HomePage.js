@@ -15,55 +15,58 @@ function HomePage(props) {
   const [searchName, setSearchName] = useState("");
   const [queryParams, setQueryParams] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    fetch(
-      process.env.REACT_APP_API_URL +
-        `/api/humanoids?pag=${currentPage}` +
-        (queryParams ? "&" + queryParams : "")
-    )
-      .then((response) => {
-        if (response.status !== 200) {
-          throw new Error("error fetching humanoids");
-        } else {
-          return response.json();
-        }
-      })
-      .then((json) => {
-        setHumanoidsResult({
-          count: json.count,
-          results: json.results,
-        });
-      })
-      .catch((err) => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        await retrieveHumanoids();
+        await retrieveCountries();
+        setError(false);
+      } catch (e) {
         setError(true);
         setHumanoidsResult({ count: 0, results: [] });
-      })
-      .finally(() => setLoading(false));
+        setCountries([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, [currentPage, queryParams]);
 
-  useEffect(() => {
-    fetch(process.env.REACT_APP_API_URL + "/api/countries")
-      .then((response) => {
-        if (response.status !== 200) {
-          throw new Error("error fetching countries");
-        } else {
-          return response.json();
-        }
-      })
-      .then((json) => {
-        setCountries(json);
-        if (!json.includes(selectedCountry)) {
-          setSelectedCountry("");
-        }
-      })
-      .catch((err) => {
-        setError(true);
-        setCountries([]);
-      });
-  }, [currentPage, queryParams]);
+  const retrieveHumanoids = async () => {
+    const humanoidsUrl =
+      process.env.REACT_APP_API_URL +
+      `/api/humanoids?pag=${currentPage}` +
+      (queryParams ? "&" + queryParams : "");
+
+    const humanoidsResponse = await fetch(humanoidsUrl);
+
+    if (humanoidsResponse.status !== 200) {
+      throw new Error("error retrieving humanoids");
+    }
+
+    const json = await humanoidsResponse.json();
+    setHumanoidsResult({ count: json.count, results: json.results });
+  };
+
+  const retrieveCountries = async () => {
+    const countriesUrl = process.env.REACT_APP_API_URL + "/api/countries";
+
+    const countriesResponse = await fetch(countriesUrl);
+
+    if (countriesResponse.status !== 200) {
+      throw new Error("error retrieving countries");
+    }
+
+    const json = await countriesResponse.json();
+    setCountries(json);
+
+    if (!json.includes(selectedCountry)) {
+      setSelectedCountry("");
+    }
+  };
 
   function makeQuery() {
     const params = new URLSearchParams();
