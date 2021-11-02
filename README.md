@@ -1,6 +1,6 @@
 # Seek For Humanoid - client
 
-This is the client of Seek For Humanoid. To run this app you need the server of Seek For Humanoid running on your computer.
+This is the client of Seek For Humanoid. The app is deployed on Github Pages at [https://n-cal.github.io/seek-for-humanoid-client](https://n-cal.github.io/seek-for-humanoid-client). To run this app locally you need the server of Seek For Humanoid running on your computer.
 
 ## Run
 
