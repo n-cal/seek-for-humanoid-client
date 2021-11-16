@@ -18,6 +18,35 @@ function HomePage(props) {
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    const retrieveHumanoids = async () => {
+      const humanoidsUrl =
+        process.env.REACT_APP_API_URL +
+        `/api/humanoids?pag=${currentPage}` +
+        (queryParams ? "&" + queryParams : "");
+  
+      const humanoidsResponse = await fetch(humanoidsUrl);
+  
+      if (humanoidsResponse.status !== 200) {
+        throw new Error("error retrieving humanoids");
+      }
+  
+      const json = await humanoidsResponse.json();
+      setHumanoidsResult({ count: json.count, results: json.results });
+    };
+
+    const retrieveCountries = async () => {
+      const countriesUrl = process.env.REACT_APP_API_URL + "/api/countries";
+  
+      const countriesResponse = await fetch(countriesUrl);
+  
+      if (countriesResponse.status !== 200) {
+        throw new Error("error retrieving countries");
+      }
+  
+      const json = await countriesResponse.json();
+      setCountries(json);
+    };
+
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -34,39 +63,6 @@ function HomePage(props) {
     };
     fetchData();
   }, [currentPage, queryParams]);
-
-  const retrieveHumanoids = async () => {
-    const humanoidsUrl =
-      process.env.REACT_APP_API_URL +
-      `/api/humanoids?pag=${currentPage}` +
-      (queryParams ? "&" + queryParams : "");
-
-    const humanoidsResponse = await fetch(humanoidsUrl);
-
-    if (humanoidsResponse.status !== 200) {
-      throw new Error("error retrieving humanoids");
-    }
-
-    const json = await humanoidsResponse.json();
-    setHumanoidsResult({ count: json.count, results: json.results });
-  };
-
-  const retrieveCountries = async () => {
-    const countriesUrl = process.env.REACT_APP_API_URL + "/api/countries";
-
-    const countriesResponse = await fetch(countriesUrl);
-
-    if (countriesResponse.status !== 200) {
-      throw new Error("error retrieving countries");
-    }
-
-    const json = await countriesResponse.json();
-    setCountries(json);
-
-    if (!json.includes(selectedCountry)) {
-      setSelectedCountry("");
-    }
-  };
 
   function makeQuery() {
     const params = new URLSearchParams();

@@ -10,22 +10,26 @@ function DetailPage(props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  useEffect(() => retrieveHumanoidDetails(), []);
+  useEffect(() => {
+    const retrieveHumanoidDetails = async () => {
+      const humanoidDetailsUrl =
+        process.env.REACT_APP_API_URL + `/api/humanoids/${params.id}`;
+  
+      setLoading(true);
+      const humanoidDetailsResponse = await fetch(humanoidDetailsUrl);
+      if (humanoidDetailsResponse.status !== 200) {
+        setError(true);
+      } else {
+        const json = await humanoidDetailsResponse.json();
+        setHumanoid(json);
+      }
+      setLoading(false);
+    };
 
-  const retrieveHumanoidDetails = async () => {
-    const humanoidDetailsUrl =
-      process.env.REACT_APP_API_URL + `/api/humanoids/${params.id}`;
+    retrieveHumanoidDetails()
+  }, [params]);
 
-    setLoading(true);
-    const humanoidDetailsResponse = await fetch(humanoidDetailsUrl);
-    if (humanoidDetailsResponse.status !== 200) {
-      setError(true);
-    } else {
-      const json = await humanoidDetailsResponse.json();
-      setHumanoid(json);
-    }
-    setLoading(false);
-  };
+  
 
   if (loading) {
     return <Loader />;
