@@ -102,7 +102,8 @@ function HomePage(props) {
       <PageSelector
         key="2"
         resultsCount={humanoidsResult.count}
-        {...{ currentPage, setCurrentPage }}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
       />,
     ];
   } else {
@@ -112,7 +113,10 @@ function HomePage(props) {
   return (
     <div className="flex flex-col items-center p-3 text-gray-600 sm:flex-row-reverse sm:justify-center sm:items-start">
       <SearchController
-        {...{ makeQuery, setSearchName, setSelectedCountry, countries }}
+        makeQuery={makeQuery}
+        setSearchName={setSearchName}
+        setSelectedCountry={setSelectedCountry}
+        countries={countries}
       />
       <div className="flex-col items-stretch flex-grow max-w-xl">{content}</div>
     </div>
